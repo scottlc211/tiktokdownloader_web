@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok 无水印下载器</title>
+    <title>视频下载器 - 无水印视频下载</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -13,39 +13,112 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         .container {
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 24px;
-            padding: 48px;
-            width: 90%;
-            max-width: 560px;
+            padding: 40px;
+            width: 100%;
+            max-width: 640px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        h1 {
+
+        /* 标题 */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .header h1 {
             color: #fff;
-            text-align: center;
             font-size: 28px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
-        .subtitle {
-            color: rgba(255,255,255,0.6);
-            text-align: center;
+        .header .subtitle {
+            color: rgba(255,255,255,0.5);
             font-size: 14px;
-            margin-bottom: 32px;
         }
+
+        /* Tab 切换 */
+        .tabs {
+            display: flex;
+            background: rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(254,44,85,0.3);
+        }
+        .tab:hover:not(.active) {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* 平台图标网格 */
+        .platforms {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .platforms.show { display: grid; }
+        .platform-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .platform-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        .platform-item.selected {
+            border-color: #fe2c55;
+            background: rgba(254,44,85,0.1);
+        }
+        .platform-item img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+        }
+        .platform-item span {
+            color: rgba(255,255,255,0.7);
+            font-size: 11px;
+            text-align: center;
+        }
+
+        /* 输入框 */
         .input-group {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         input[type="text"] {
             width: 100%;
             padding: 16px 20px;
-            font-size: 16px;
+            font-size: 15px;
             background: rgba(255,255,255,0.08);
-            border: 2px solid rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.12);
             border-radius: 14px;
             color: #fff;
             outline: none;
@@ -55,11 +128,13 @@
             border-color: #fe2c55;
             background: rgba(255,255,255,0.12);
         }
-        input[type="text"]::placeholder { color: rgba(255,255,255,0.4); }
+        input[type="text"]::placeholder { color: rgba(255,255,255,0.35); }
+
+        /* 按钮 */
         .btn {
             width: 100%;
             padding: 16px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
             background: linear-gradient(135deg, #fe2c55, #ff6b35);
             color: #fff;
@@ -67,20 +142,12 @@
             border-radius: 14px;
             cursor: pointer;
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(254,44,85,0.4); }
-        .btn:active { transform: translateY(0); }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .btn .spinner {
             display: none;
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             border: 2px solid rgba(255,255,255,0.3);
             border-top-color: #fff;
             border-radius: 50%;
@@ -91,6 +158,7 @@
         .btn.loading .spinner { display: inline-block; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* 结果 */
         .result {
             display: none;
             margin-top: 24px;
@@ -105,26 +173,30 @@
         .result-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 14px;
+            margin-bottom: 18px;
         }
         .result-thumb {
-            width: 80px;
-            height: 80px;
+            width: 90px; height: 90px;
             border-radius: 12px;
             object-fit: cover;
             background: rgba(255,255,255,0.1);
         }
         .result-info { flex: 1; }
-        .result-author {
+        .result-host {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(254,44,85,0.2);
             color: #fe2c55;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
-        .result-desc {
-            color: rgba(255,255,255,0.7);
-            font-size: 13px;
+        .result-title {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
             line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -132,30 +204,56 @@
             overflow: hidden;
         }
 
-        .download-btns { display: flex; flex-direction: column; gap: 10px; }
-        .dl-btn {
+        /* 下载按钮列表 */
+        .download-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .dl-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .dl-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(4px);
+        }
+        .dl-item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .dl-item-icon {
+            width: 40px; height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+        .dl-item-icon.video { background: rgba(254,44,85,0.2); }
+        .dl-item-icon.audio { background: rgba(37,244,238,0.2); }
+        .dl-item-icon.image { background: rgba(255,215,0,0.2); }
+        .dl-item-text .quality {
             font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
+            font-size: 14px;
         }
-        .dl-btn.video {
-            background: linear-gradient(135deg, #25f4ee, #fe2c55);
-            color: #fff;
+        .dl-item-text .size {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
         }
-        .dl-btn.music {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.2);
+        .dl-item-arrow {
+            color: rgba(255,255,255,0.3);
         }
-        .dl-btn:hover { transform: translateY(-1px); }
 
+        /* 错误 */
         .error {
             display: none;
             margin-top: 20px;
@@ -169,94 +267,273 @@
         }
         .error.show { display: block; animation: fadeIn 0.3s ease; }
 
+        /* 页脚 */
         .footer {
             text-align: center;
             margin-top: 24px;
-            color: rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.25);
             font-size: 12px;
         }
 
+        /* 响应式 */
         @media (max-width: 480px) {
-            .container { padding: 32px 24px; }
-            h1 { font-size: 24px; }
+            .container { padding: 28px 20px; }
+            .header h1 { font-size: 24px; }
+            .platforms { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎵 TikTok 下载器</h1>
-        <p class="subtitle">无水印视频 & MP3 一键下载</p>
+        <div class="header">
+            <h1>🎬 视频下载器</h1>
+            <p class="subtitle">支持 30+ 平台 · 无水印 · 高清下载</p>
+        </div>
 
-        <form id="form" onsubmit="return handleSubmit(event)">
-            <div class="input-group">
-                <input type="text" id="urlInput" placeholder="粘贴 TikTok 视频链接..." autocomplete="off" spellcheck="false">
+        <!-- Tab 切换 -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('multi')">多平台下载</div>
+            <div class="tab" onclick="switchTab('tiktok')">TikTok 专用</div>
+        </div>
+
+        <!-- 多平台模式 -->
+        <div id="multiMode">
+            <div class="platforms show" id="platformGrid">
+                <!-- 由 JS 生成 -->
             </div>
-            <button type="submit" class="btn" id="submitBtn">
+            <div class="input-group">
+                <input type="text" id="multiUrl" placeholder="粘贴视频链接..." autocomplete="off" spellcheck="false">
+            </div>
+            <button class="btn" id="multiBtn" onclick="handleMulti()">
                 <span class="btn-text">解析下载</span>
                 <span class="spinner"></span>
             </button>
-        </form>
+        </div>
+
+        <!-- TikTok 专用模式 -->
+        <div id="tiktokMode" style="display:none">
+            <div class="input-group">
+                <input type="text" id="tiktokUrl" placeholder="粘贴 TikTok 视频链接..." autocomplete="off" spellcheck="false">
+            </div>
+            <button class="btn" id="tiktokBtn" onclick="handleTikTok()">
+                <span class="btn-text">解析下载 (HD高清)</span>
+                <span class="spinner"></span>
+            </button>
+        </div>
 
         <div class="error" id="error"></div>
 
         <div class="result" id="result">
             <div class="result-header">
-                <img class="result-thumb" id="thumb" src="" alt="cover">
+                <img class="result-thumb" id="thumb" src="" alt="">
                 <div class="result-info">
-                    <div class="result-author" id="author"></div>
-                    <div class="result-desc" id="desc"></div>
+                    <span class="result-host" id="host"></span>
+                    <div class="result-title" id="title"></div>
                 </div>
             </div>
-            <div class="download-btns">
-                <a class="dl-btn video" id="dlVideo" href="#" target="_blank">
-                    ⬇️ 下载无水印视频
-                </a>
-                <a class="dl-btn music" id="dlMusic" href="#" target="_blank" style="display:none">
-                    🎵 下载背景音乐
-                </a>
+            <div class="download-list" id="downloadList">
+                <!-- 由 JS 生成 -->
             </div>
         </div>
 
-        <div class="footer">Powered by ssstik.io reverse engineering</div>
+        <div class="footer">仅供学习研究使用 · 请勿用于商业用途</div>
     </div>
 
     <script>
-        const API = '/api/download';
+        // 支持的平台
+        const PLATFORMS = [
+            { name: 'TikTok', icon: '🎵', domain: 'tiktok.com' },
+            { name: 'YouTube', icon: '▶️', domain: 'youtube.com' },
+            { name: '抖音', icon: '🎶', domain: 'douyin.com' },
+            { name: 'B站', icon: '📺', domain: 'bilibili.com' },
+            { name: 'Twitter/X', icon: '🐦', domain: 'x.com' },
+            { name: 'Instagram', icon: '📸', domain: 'instagram.com' },
+            { name: '快手', icon: '⚡', domain: 'kuaishou.com' },
+            { name: '小红书', icon: '📕', domain: 'xiaohongshu.com' },
+            { name: '微博', icon: '🔥', domain: 'weibo.com' },
+            { name: 'Facebook', icon: '👤', domain: 'facebook.com' },
+            { name: '西瓜视频', icon: '🍉', domain: 'ixigua.com' },
+            { name: 'Pinterest', icon: '📌', domain: 'pinterest.com' },
+        ];
 
-        async function handleSubmit(e) {
-            e.preventDefault();
-            const url = document.getElementById('urlInput').value.trim();
+        let currentTab = 'multi';
+
+        // 初始化平台网格
+        function initPlatforms() {
+            const grid = document.getElementById('platformGrid');
+            grid.innerHTML = PLATFORMS.map((p, i) => `
+                <div class="platform-item" onclick="selectPlatform(${i})" title="${p.name}">
+                    <span style="font-size:28px">${p.icon}</span>
+                    <span>${p.name}</span>
+                </div>
+            `).join('');
+        }
+
+        // 切换 Tab
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach((el, i) => {
+                el.classList.toggle('active', (i === 0 && tab === 'multi') || (i === 1 && tab === 'tiktok'));
+            });
+            document.getElementById('multiMode').style.display = tab === 'multi' ? 'block' : 'none';
+            document.getElementById('tiktokMode').style.display = tab === 'tiktok' ? 'block' : 'none';
+            hideResult();
+        }
+
+        // 选择平台
+        function selectPlatform(i) {
+            document.querySelectorAll('.platform-item').forEach((el, j) => {
+                el.classList.toggle('selected', i === j);
+            });
+            document.getElementById('multiUrl').placeholder = `粘贴 ${PLATFORMS[i].name} 视频链接...`;
+            document.getElementById('multiUrl').focus();
+        }
+
+        // 多平台解析
+        async function handleMulti() {
+            const url = document.getElementById('multiUrl').value.trim();
             if (!url) return;
 
-            const btn = document.getElementById('submitBtn');
-            const err = document.getElementById('error');
-            const res = document.getElementById('result');
-
+            const btn = document.getElementById('multiBtn');
             btn.classList.add('loading');
             btn.disabled = true;
-            err.className = 'error';
-            res.className = 'result';
+            hideError();
+            hideResult();
 
             try {
-                const resp = await fetch(API, {
+                const resp = await fetch('/api/video/extract', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url })
                 });
+                const data = await resp.json();
 
+                if (data.code !== 200) {
+                    showError(data.message || '解析失败');
+                } else {
+                    showResult(data.data);
+                }
+            } catch (e) {
+                showError('网络请求失败，请检查后端服务');
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+
+        // TikTok 专用解析
+        async function handleTikTok() {
+            const url = document.getElementById('tiktokUrl').value.trim();
+            if (!url) return;
+
+            const btn = document.getElementById('tiktokBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            hideError();
+            hideResult();
+
+            try {
+                const resp = await fetch('/api/tiktok/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, hd: true })
+                });
                 const data = await resp.json();
 
                 if (data.error) {
                     showError(data.error);
                 } else {
-                    showResult(data);
+                    showTikTokResult(data);
                 }
             } catch (e) {
-                showError('网络请求失败，请检查后端服务是否运行');
+                showError('网络请求失败');
             } finally {
                 btn.classList.remove('loading');
                 btn.disabled = false;
             }
+        }
+
+        // 显示多平台结果
+        function showResult(data) {
+            const res = document.getElementById('result');
+            document.getElementById('thumb').src = getCover(data) || '';
+            document.getElementById('host').textContent = data.hostAlias || data.host;
+            document.getElementById('title').textContent = data.displayTitle || '';
+
+            const list = document.getElementById('downloadList');
+            list.innerHTML = (data.videoItemVoList || []).map(item => {
+                const iconClass = item.fileType === 'image' ? 'image' : item.quality === '音频' ? 'audio' : 'video';
+                const icon = item.fileType === 'image' ? '🖼️' : item.quality === '音频' ? '🎵' : '🎬';
+                const size = item.size ? formatSize(item.size) : '';
+
+                return `
+                    <a class="dl-item" href="${item.baseUrl}" target="_blank" rel="noopener">
+                        <div class="dl-item-info">
+                            <div class="dl-item-icon ${iconClass}">${icon}</div>
+                            <div class="dl-item-text">
+                                <div class="quality">${item.qualityAlias || item.quality}</div>
+                                <div class="size">${size}</div>
+                            </div>
+                        </div>
+                        <div class="dl-item-arrow">→</div>
+                    </a>
+                `;
+            }).join('');
+
+            res.className = 'result show';
+        }
+
+        // 显示 TikTok 结果
+        function showTikTokResult(data) {
+            const res = document.getElementById('result');
+            document.getElementById('thumb').src = data.cover_url || '';
+            document.getElementById('host').textContent = 'TikTok HD';
+            document.getElementById('title').textContent = data.description || data.author || '';
+
+            const list = document.getElementById('downloadList');
+            let html = '';
+            if (data.video_url) {
+                html += `
+                    <a class="dl-item" href="${data.video_url}" target="_blank" rel="noopener">
+                        <div class="dl-item-info">
+                            <div class="dl-item-icon video">🎬</div>
+                            <div class="dl-item-text">
+                                <div class="quality">无水印视频 (HD)</div>
+                            </div>
+                        </div>
+                        <div class="dl-item-arrow">→</div>
+                    </a>
+                `;
+            }
+            if (data.music_url) {
+                html += `
+                    <a class="dl-item" href="${data.music_url}" target="_blank" rel="noopener">
+                        <div class="dl-item-info">
+                            <div class="dl-item-icon audio">🎵</div>
+                            <div class="dl-item-text">
+                                <div class="quality">背景音乐</div>
+                            </div>
+                        </div>
+                        <div class="dl-item-arrow">→</div>
+                    </a>
+                `;
+            }
+            list.innerHTML = html;
+            res.className = 'result show';
+        }
+
+        // 获取封面
+        function getCover(data) {
+            const cover = (data.videoItemVoList || []).find(i => i.fileType === 'image');
+            return cover ? cover.baseUrl : '';
+        }
+
+        // 格式化大小
+        function formatSize(bytes) {
+            if (!bytes) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
         }
 
         function showError(msg) {
@@ -264,37 +541,19 @@
             el.textContent = msg;
             el.className = 'error show';
         }
+        function hideError() { document.getElementById('error').className = 'error'; }
+        function hideResult() { document.getElementById('result').className = 'result'; }
 
-        function showResult(data) {
-            const res = document.getElementById('result');
-
-            document.getElementById('thumb').src = data.cover_url || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect fill="%23333" width="80" height="80" rx="12"/><text x="50%25" y="55%25" text-anchor="middle" fill="%23666" font-size="30">🎬</text></svg>';
-            document.getElementById('author').textContent = data.author || '未知作者';
-            document.getElementById('desc').textContent = data.description || '';
-
-            const videoLink = document.getElementById('dlVideo');
-            videoLink.href = data.video_url || '#';
-            if (data.video_url) videoLink.download = 'tiktok_video.mp4';
-
-            const musicLink = document.getElementById('dlMusic');
-            if (data.music_url) {
-                musicLink.href = data.music_url;
-                musicLink.style.display = 'flex';
-            } else {
-                musicLink.style.display = 'none';
-            }
-
-            res.className = 'result show';
-        }
-
-        // 支持粘贴自动解析
-        document.getElementById('urlInput').addEventListener('paste', function(e) {
-            setTimeout(() => {
-                if (this.value.trim().includes('tiktok.com')) {
-                    document.getElementById('form').dispatchEvent(new Event('submit'));
-                }
-            }, 100);
+        // 粘贴自动解析
+        document.getElementById('multiUrl').addEventListener('paste', function() {
+            setTimeout(() => { if (this.value.trim()) handleMulti(); }, 150);
         });
+        document.getElementById('tiktokUrl').addEventListener('paste', function() {
+            setTimeout(() => { if (this.value.trim()) handleTikTok(); }, 150);
+        });
+
+        // 初始化
+        initPlatforms();
     </script>
 </body>
 </html>
