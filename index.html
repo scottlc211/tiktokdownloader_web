@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok 无水印下载器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 48px;
+            width: 90%;
+            max-width: 560px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #fff;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #fe2c55;
+            background: rgba(255,255,255,0.12);
+        }
+        input[type="text"]::placeholder { color: rgba(255,255,255,0.4); }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(254,44,85,0.4); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        .btn.loading .btn-text { display: none; }
+        .btn.loading .spinner { display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .result {
+            display: none;
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .result.show { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .result-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: rgba(255,255,255,0.1);
+        }
+        .result-info { flex: 1; }
+        .result-author {
+            color: #fe2c55;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .result-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .download-btns { display: flex; flex-direction: column; gap: 10px; }
+        .dl-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .dl-btn.video {
+            background: linear-gradient(135deg, #25f4ee, #fe2c55);
+            color: #fff;
+        }
+        .dl-btn.music {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .dl-btn:hover { transform: translateY(-1px); }
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(255,59,48,0.15);
+            border: 1px solid rgba(255,59,48,0.3);
+            border-radius: 12px;
+            color: #ff6b6b;
+            font-size: 14px;
+            text-align: center;
+        }
+        .error.show { display: block; animation: fadeIn 0.3s ease; }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 32px 24px; }
+            h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 TikTok 下载器</h1>
+        <p class="subtitle">无水印视频 & MP3 一键下载</p>
+
+        <form id="form" onsubmit="return handleSubmit(event)">
+            <div class="input-group">
+                <input type="text" id="urlInput" placeholder="粘贴 TikTok 视频链接..." autocomplete="off" spellcheck="false">
+            </div>
+            <button type="submit" class="btn" id="submitBtn">
+                <span class="btn-text">解析下载</span>
+                <span class="spinner"></span>
+            </button>
+        </form>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <div class="result-header">
+                <img class="result-thumb" id="thumb" src="" alt="cover">
+                <div class="result-info">
+                    <div class="result-author" id="author"></div>
+                    <div class="result-desc" id="desc"></div>
+                </div>
+            </div>
+            <div class="download-btns">
+                <a class="dl-btn video" id="dlVideo" href="#" target="_blank">
+                    ⬇️ 下载无水印视频
+                </a>
+                <a class="dl-btn music" id="dlMusic" href="#" target="_blank" style="display:none">
+                    🎵 下载背景音乐
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">Powered by ssstik.io reverse engineering</div>
+    </div>
+
+    <script>
+        const API = '/api/download';
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) return;
+
+            const btn = document.getElementById('submitBtn');
+            const err = document.getElementById('error');
+            const res = document.getElementById('result');
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+            err.className = 'error';
+            res.className = 'result';
+
+            try {
+                const resp = await fetch(API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await resp.json();
+
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    showResult(data);
+                }
+            } catch (e) {
+                showError('网络请求失败，请检查后端服务是否运行');
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error');
+            el.textContent = msg;
+            el.className = 'error show';
+        }
+
+        function showResult(data) {
+            const res = document.getElementById('result');
+
+            document.getElementById('thumb').src = data.cover_url || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect fill="%23333" width="80" height="80" rx="12"/><text x="50%25" y="55%25" text-anchor="middle" fill="%23666" font-size="30">🎬</text></svg>';
+            document.getElementById('author').textContent = data.author || '未知作者';
+            document.getElementById('desc').textContent = data.description || '';
+
+            const videoLink = document.getElementById('dlVideo');
+            videoLink.href = data.video_url || '#';
+            if (data.video_url) videoLink.download = 'tiktok_video.mp4';
+
+            const musicLink = document.getElementById('dlMusic');
+            if (data.music_url) {
+                musicLink.href = data.music_url;
+                musicLink.style.display = 'flex';
+            } else {
+                musicLink.style.display = 'none';
+            }
+
+            res.className = 'result show';
+        }
+
+        // 支持粘贴自动解析
+        document.getElementById('urlInput').addEventListener('paste', function(e) {
+            setTimeout(() => {
+                if (this.value.trim().includes('tiktok.com')) {
+                    document.getElementById('form').dispatchEvent(new Event('submit'));
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
