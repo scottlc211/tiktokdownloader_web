@@ -466,8 +466,9 @@
                 const icon = item.fileType === 'image' ? '🖼️' : item.quality === '音频' ? '🎵' : '🎬';
                 const size = item.size ? formatSize(item.size) : '';
 
+                const dlUrl = `/api/proxy?url=${encodeURIComponent(item.baseUrl)}`;
                 return `
-                    <a class="dl-item" href="${item.baseUrl}" target="_blank" rel="noopener">
+                    <a class="dl-item" href="${dlUrl}" download>
                         <div class="dl-item-info">
                             <div class="dl-item-icon ${iconClass}">${icon}</div>
                             <div class="dl-item-text">

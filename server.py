@@ -172,26 +172,92 @@ class TikTokDownloader:
         return result
 
 
-# ========== 多平台下载器 (GreenVideo API) ==========
+# ========== 多平台下载器 ==========
 class MultiPlatformDownloader:
     def __init__(self):
-        self.api_url = "https://greenvideo.cc/api/video/extract"
+        self.greenvideo_url = "https://greenvideo.cc/api/video/extract"
+        self.douyin_wtf_url = "https://douyin.wtf/api/hybrid/video_data"
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Referer": "https://greenvideo.cc/",
-            "Content-Type": "application/json",
         })
 
-    def extract(self, url):
+    def _is_douyin(self, url):
+        return 'douyin.com' in url or 'v.douyin.com' in url
+
+    def _extract_douyin(self, url):
+        """用 douyin.wtf API 解析抖音链接"""
         try:
-            resp = self.session.post(self.api_url, json={"url": url}, timeout=30)
+            resp = self.session.get(
+                self.douyin_wtf_url,
+                params={"url": url},
+                headers={"Referer": "https://douyin.wtf/"},
+                timeout=30,
+            )
+            data = resp.json()
+            if data.get("code") != 200:
+                return None
+            info = data.get("data", {})
+            video = info.get("video", {})
+            play_addr = video.get("play_addr", {})
+            urls = play_addr.get("url_list", [])
+            cover_url = ""
+            cover_list = video.get("cover", {}).get("url_list", [])
+            if cover_list:
+                cover_url = cover_list[0]
+            items = []
+            if urls:
+                items.append({
+                    "baseUrl": urls[0],
+                    "quality": "无水印",
+                    "qualityAlias": "无水印视频",
+                    "fileType": "video",
+                    "size": play_addr.get("data_size", 0),
+                })
+            return {
+                "vid": str(info.get("aweme_id", "")),
+                "host": "douyin",
+                "hostAlias": "抖音",
+                "displayTitle": info.get("desc", ""),
+                "status": "finish",
+                "videoItemVoList": items,
+                "_cover": cover_url,
+            }
+        except Exception as e:
+            print(f"[!] douyin.wtf 解析失败: {e}")
+            return None
+
+    def _extract_greenvideo(self, url):
+        """用 GreenVideo API 解析"""
+        try:
+            resp = self.session.post(
+                self.greenvideo_url,
+                json={"url": url},
+                headers={"Referer": "https://greenvideo.cc/", "Content-Type": "application/json"},
+                timeout=30,
+            )
             data = resp.json()
             if data.get("code") == 200:
                 return data.get("data", {})
             return {"error": data.get("message", "解析失败")}
         except Exception as e:
             return {"error": str(e)}
+
+    def extract(self, url):
+        # 抖音链接优先用 douyin.wtf
+        if self._is_douyin(url):
+            result = self._extract_douyin(url)
+            if result:
+                return result
+            print("[*] douyin.wtf 失败，尝试 GreenVideo...")
+
+        # 其他平台或备用
+        result = self._extract_greenvideo(url)
+        if "error" not in result:
+            return result
+
+        # 最后兜底
+        return {"error": result.get("error", "解析失败，请稍后重试")}
 
 
 tiktok_dl = TikTokDownloader()
@@ -202,12 +268,6 @@ multi_dl = MultiPlatformDownloader()
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=os.path.dirname(os.path.abspath(__file__)), **kwargs)
-
-    def do_GET(self):
-        if self.path == '/' or self.path == '/index.html':
-            self.path = '/index.html'
-            return super().do_GET()
-        super().do_GET()
 
     def do_POST(self):
         content_length = int(self.headers.get('Content-Length', 0))
@@ -241,6 +301,47 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json_response(result, status)
 
         self._json_response({"error": "Not Found"}, 404)
+
+    def do_GET(self):
+        # 代理下载
+        print(f"[DEBUG] GET self.path = {self.path}")
+        if '/api/proxy' in self.path:
+            from urllib.parse import unquote, urlparse, parse_qs
+            query = parse_qs(urlparse(self.path).query)
+            url = unquote(query.get('url', [''])[0])
+            if not url:
+                return self._json_response({"error": "missing url"}, 400)
+            print(f"[{time.strftime('%H:%M:%S')}] 代理下载: {url[:80]}...")
+            try:
+                headers = {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                    "Referer": "https://www.douyin.com/",
+                }
+                resp = requests.get(url, headers=headers, stream=True, timeout=120, allow_redirects=True)
+                resp.raise_for_status()
+                content_type = resp.headers.get('Content-Type', 'video/mp4')
+                content_len = resp.headers.get('Content-Length')
+                self.send_response(200)
+                self.send_header('Content-Type', content_type)
+                if content_len:
+                    self.send_header('Content-Length', content_len)
+                self.send_header('Content-Disposition', 'attachment; filename="video.mp4"')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                for chunk in resp.iter_content(chunk_size=8192):
+                    self.wfile.write(chunk)
+            except Exception as e:
+                print(f"[!] 代理下载失败: {e}")
+                try:
+                    self._json_response({"error": str(e)}, 502)
+                except:
+                    pass
+            return
+
+        if self.path == '/' or self.path == '/index.html':
+            self.path = '/index.html'
+            return super().do_GET()
+        super().do_GET()
 
     def do_OPTIONS(self):
         self.send_response(200)
