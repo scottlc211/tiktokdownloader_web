@@ -8,68 +8,293 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-color: #0b0914;
+            background-image: url('https://pic.sl.al/gdrive/pic/2026-05-15/fileid_1gwcrYA3yI7JrlCl2XymmBRWEjUpk_4OI_back.png');
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(11, 9, 20, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: #ff713a;
+        }
+        .nav-right .favorite-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-right .favorite-btn:hover {
+            border-color: #ff713a;
+            color: #ff713a;
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1400px;
+            margin: 100px auto 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 140px;
+            padding: 40px 60px 0;
+            flex: 1;
+        }
+        .left-column {
+            flex: 1;
+            padding-right: 20px;
+            padding-top: 40px;
+        }
+        .right-column {
+            flex: 0 0 480px;
+            max-width: 480px;
+            position: relative;
+        }
+
+        /* Left Content Styles */
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+        .badge-text {
+            background: linear-gradient(90deg, #ff2a5f, #ff713a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .hero-title {
+            font-size: 56px;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .highlight {
+            background: linear-gradient(90deg, #ff2a5f, #ff713a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 480px;
+        }
+        
+        .features {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            flex-shrink: 0;
         }
-        .container {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(20px);
+        .icon-blue { background: #4f46e5; color: white; }
+        .icon-red { background: #ff713a; color: white; font-size: 14px; }
+        .icon-yellow { background: #f59e0b; color: white; }
+        .feature-text h4 { font-size: 15px; margin-bottom: 4px; font-weight: 600; }
+        .feature-text p { color: rgba(255,255,255,0.5); font-size: 12px; }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            background: rgba(20, 15, 35, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            max-width: 520px;
+            backdrop-filter: blur(10px);
+        }
+        .stat-item {
+            text-align: center;
+            position: relative;
+            flex: 1;
+        }
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 30px;
+            width: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        .stat-item h3 {
+            font-size: 22px;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .stat-item p {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
+
+        /* Floating Icons */
+        .floating-icon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
+        .icon-link {
+            top: 10%;
+            left: -30px;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.8), rgba(59, 130, 246, 0.8));
+            animation-delay: 0s;
+        }
+        .icon-play {
+            top: -20px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(217, 70, 239, 0.8), rgba(139, 92, 246, 0.8));
+            animation-delay: 1s;
+        }
+        .icon-download {
+            bottom: 30px;
+            right: -20px;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.8), rgba(245, 158, 11, 0.8));
+            animation-delay: 2s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Right Column Download Card */
+        .download-card {
+            background: rgba(25, 20, 45, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 24px;
-            padding: 40px;
-            width: 100%;
-            max-width: 640px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 36px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+            position: relative;
+            z-index: 5;
         }
-
-        /* 标题 */
-        .header {
+        .card-header {
             text-align: center;
-            margin-bottom: 28px;
-        }
-        .header h1 {
-            color: #fff;
-            font-size: 28px;
-            margin-bottom: 6px;
-        }
-        .header .subtitle {
-            color: rgba(255,255,255,0.5);
-            font-size: 14px;
-        }
-
-        /* Tab 切换 */
-        .tabs {
-            display: flex;
-            background: rgba(255,255,255,0.06);
-            border-radius: 14px;
-            padding: 4px;
             margin-bottom: 24px;
         }
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
+        .card-header h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .card-header p {
             color: rgba(255,255,255,0.5);
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .tab.active {
-            background: linear-gradient(135deg, #fe2c55, #ff6b35);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(254,44,85,0.3);
-        }
-        .tab:hover:not(.active) {
-            color: rgba(255,255,255,0.8);
+            font-size: 13px;
         }
 
-        /* 平台图标网格 */
+        .custom-tabs {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 8, 20, 0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 6px 6px 6px 16px;
+            margin-bottom: 16px;
+        }
+        .tab-label {
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: linear-gradient(90deg, #ff2a5f, #ff713a);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(255, 42, 95, 0.3);
+        }
+
+        /* Platform Grid for Multi Mode */
         .platforms {
             display: none;
             grid-template-columns: repeat(4, 1fr);
@@ -82,90 +307,119 @@
             flex-direction: column;
             align-items: center;
             gap: 6px;
-            padding: 12px 8px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
+            padding: 10px 6px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s;
-            border: 2px solid transparent;
+            border: 1px solid transparent;
         }
         .platform-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             transform: translateY(-2px);
         }
         .platform-item.selected {
-            border-color: #fe2c55;
-            background: rgba(254,44,85,0.1);
-        }
-        .platform-item img {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            border-color: #ff2a5f;
+            background: rgba(255,42,95,0.1);
         }
         .platform-item span {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.6);
             font-size: 11px;
             text-align: center;
         }
 
-        /* 输入框 */
         .input-group {
-            position: relative;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         input[type="text"] {
             width: 100%;
             padding: 16px 20px;
-            font-size: 15px;
-            background: rgba(255,255,255,0.08);
-            border: 2px solid rgba(255,255,255,0.12);
-            border-radius: 14px;
+            font-size: 14px;
+            background: rgba(10, 8, 20, 0.4);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
             color: #fff;
             outline: none;
             transition: all 0.3s;
         }
         input[type="text"]:focus {
-            border-color: #fe2c55;
-            background: rgba(255,255,255,0.12);
+            border-color: #ff713a;
+            background: rgba(10, 8, 20, 0.6);
         }
-        input[type="text"]::placeholder { color: rgba(255,255,255,0.35); }
+        input[type="text"]::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
 
-        /* 按钮 */
-        .btn {
+        .gradient-btn {
             width: 100%;
             padding: 16px;
             font-size: 16px;
             font-weight: 600;
-            background: linear-gradient(135deg, #fe2c55, #ff6b35);
+            background: linear-gradient(90deg, #ff2a5f, #ff713a);
             color: #fff;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(255, 42, 95, 0.3);
+            position: relative;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(254,44,85,0.4); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn .spinner {
+        .gradient-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(255, 42, 95, 0.4);
+        }
+        .gradient-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .spinner {
             display: none;
             width: 20px; height: 20px;
             border: 2px solid rgba(255,255,255,0.3);
             border-top-color: #fff;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin: 0 auto;
+            position: absolute;
+            left: 50%; top: 50%;
+            margin-left: -10px; margin-top: -10px;
         }
-        .btn.loading .btn-text { display: none; }
-        .btn.loading .spinner { display: inline-block; }
+        .gradient-btn.loading .btn-text { visibility: hidden; }
+        .gradient-btn.loading .spinner { display: block; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* 结果 */
+        .card-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* 结果与错误 */
+        .error {
+            display: none;
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(255,59,48,0.15);
+            border: 1px solid rgba(255,59,48,0.3);
+            border-radius: 10px;
+            color: #ff6b6b;
+            font-size: 13px;
+            text-align: center;
+        }
+        .error.show { display: block; animation: fadeIn 0.3s ease; }
+
         .result {
             display: none;
-            margin-top: 24px;
-            padding: 20px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(10, 8, 20, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         .result.show { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -173,171 +427,316 @@
         .result-header {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 18px;
+            gap: 12px;
+            margin-bottom: 16px;
         }
         .result-thumb {
-            width: 90px; height: 90px;
-            border-radius: 12px;
+            width: 70px; height: 70px;
+            border-radius: 8px;
             object-fit: cover;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
         }
         .result-info { flex: 1; }
         .result-host {
             display: inline-block;
-            padding: 3px 10px;
-            background: rgba(254,44,85,0.2);
-            color: #fe2c55;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 2px 8px;
+            background: rgba(255,42,95,0.15);
+            color: #ff2a5f;
+            border-radius: 4px;
+            font-size: 11px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .result-title {
-            color: #fff;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
             line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            color: #fff;
         }
 
-        /* 下载按钮列表 */
         .download-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
         .dl-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
             text-decoration: none;
             color: #fff;
             transition: all 0.3s;
         }
         .dl-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             transform: translateX(4px);
         }
         .dl-item-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .dl-item-icon {
-            width: 40px; height: 40px;
+            width: 32px; height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            font-size: 18px;
+            border-radius: 8px;
+            font-size: 16px;
         }
-        .dl-item-icon.video { background: rgba(254,44,85,0.2); }
-        .dl-item-icon.audio { background: rgba(37,244,238,0.2); }
-        .dl-item-icon.image { background: rgba(255,215,0,0.2); }
-        .dl-item-text .quality {
-            font-weight: 600;
-            font-size: 14px;
+        .dl-item-icon.video { background: rgba(255,42,95,0.15); }
+        .dl-item-icon.audio { background: rgba(37,244,238,0.15); }
+        .dl-item-icon.image { background: rgba(255,215,0,0.15); }
+        .dl-item-text .quality { font-weight: 600; font-size: 13px; }
+        .dl-item-text .size { font-size: 11px; color: rgba(255,255,255,0.4); }
+        .dl-item-arrow { color: rgba(255,255,255,0.2); }
+
+        /* Site Footer */
+        .site-footer {
+            text-align: center;
+            padding: 40px 20px 20px;
+            margin-top: auto;
         }
-        .dl-item-text .size {
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
+        .supported-platforms {
+            margin-bottom: 30px;
         }
-        .dl-item-arrow {
+        .supported-platforms p {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+        .platform-icons {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            font-size: 20px;
+            color: rgba(255,255,255,0.6);
+        }
+        .platform-icons span {
+            opacity: 0.5;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        .platform-icons span:hover {
+            opacity: 1;
+        }
+        .copyright {
             color: rgba(255,255,255,0.3);
-        }
-
-        /* 错误 */
-        .error {
-            display: none;
-            margin-top: 20px;
-            padding: 16px;
-            background: rgba(255,59,48,0.15);
-            border: 1px solid rgba(255,59,48,0.3);
-            border-radius: 12px;
-            color: #ff6b6b;
-            font-size: 14px;
-            text-align: center;
-        }
-        .error.show { display: block; animation: fadeIn 0.3s ease; }
-
-        /* 页脚 */
-        .footer {
-            text-align: center;
-            margin-top: 24px;
-            color: rgba(255,255,255,0.25);
             font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .copyright a {
+            color: rgba(255,255,255,0.3);
+            text-decoration: none;
+        }
+        .copyright a:hover {
+            color: rgba(255,255,255,0.6);
         }
 
         /* 响应式 */
+        @media (max-width: 1200px) {
+            .main-container { padding: 40px 30px 0; gap: 30px; }
+            .right-column { flex: 0 0 420px; max-width: 420px; }
+        }
+        @media (max-width: 992px) {
+            .navbar { padding: 16px 20px; }
+            .nav-links { display: none; }
+            .main-container {
+                flex-direction: column;
+                margin-top: 100px;
+                gap: 40px;
+                padding: 20px;
+            }
+            .left-column { padding-right: 0; text-align: center; padding-top: 0; }
+            .hero-desc { margin: 0 auto 40px; }
+            .features { justify-content: center; flex-wrap: wrap; }
+            .stats { margin: 0 auto; }
+            .right-column { flex: unset; max-width: 100%; width: 100%; }
+            .floating-icon { display: none; }
+        }
         @media (max-width: 480px) {
-            .container { padding: 28px 20px; }
-            .header h1 { font-size: 24px; }
+            .hero-title { font-size: 40px; }
+            .stats { flex-wrap: wrap; gap: 20px; padding: 20px; }
+            .stat-item { flex: 1 1 40%; }
+            .stat-item:not(:last-child)::after { display: none; }
             .platforms { grid-template-columns: repeat(3, 1fr); }
+            .download-card { padding: 24px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎬 视频下载器</h1>
-            <p class="subtitle">支持 30+ 平台 · 无水印 · 高清下载</p>
-        </div>
 
-        <!-- Tab 切换 -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('multi')">多平台下载</div>
-            <div class="tab" onclick="switchTab('tiktok')">TikTok 专用</div>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">🎬 视频下载器</div>
+        <div class="nav-links">
+            <a href="#" class="active">首页</a>
+            <a href="#">使用教程</a>
+            <a href="#">支持平台</a>
+            <a href="#">常见问题</a>
+            <a href="#">更新日志</a>
         </div>
+        <div class="nav-right">
+            <button class="favorite-btn">★ 收藏本站</button>
+        </div>
+    </nav>
 
-        <!-- 多平台模式 -->
-        <div id="multiMode">
-            <div class="platforms show" id="platformGrid">
-                <!-- 由 JS 生成 -->
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Left Column -->
+        <div class="left-column">
+            <div class="badge">
+                <span class="badge-text">全新升级 · 更快更强</span>
             </div>
-            <div class="input-group">
-                <input type="text" id="multiUrl" placeholder="粘贴视频链接..." autocomplete="off" spellcheck="false">
-            </div>
-            <button class="btn" id="multiBtn" onclick="handleMulti()">
-                <span class="btn-text">解析下载</span>
-                <span class="spinner"></span>
-            </button>
-        </div>
+            <h1 class="hero-title">
+                视频下载，<br>
+                从未如此<span class="highlight">简单</span>
+            </h1>
+            <p class="hero-desc">
+                支持多平台视频解析下载，高清画质，无水印保存。<br>极简操作，畅享精彩内容。
+            </p>
 
-        <!-- TikTok 专用模式 -->
-        <div id="tiktokMode" style="display:none">
-            <div class="input-group">
-                <input type="text" id="tiktokUrl" placeholder="粘贴 TikTok 视频链接..." autocomplete="off" spellcheck="false">
-            </div>
-            <button class="btn" id="tiktokBtn" onclick="handleTikTok()">
-                <span class="btn-text">解析下载 (HD高清)</span>
-                <span class="spinner"></span>
-            </button>
-        </div>
-
-        <div class="error" id="error"></div>
-
-        <div class="result" id="result">
-            <div class="result-header">
-                <img class="result-thumb" id="thumb" src="" alt="">
-                <div class="result-info">
-                    <span class="result-host" id="host"></span>
-                    <div class="result-title" id="title"></div>
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon icon-blue">⚡</div>
+                    <div class="feature-text">
+                        <h4>极速解析</h4>
+                        <p>秒级解析视频链接</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon icon-red">HD</div>
+                    <div class="feature-text">
+                        <h4>高清下载</h4>
+                        <p>支持多种画质选择</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon icon-yellow">🛡️</div>
+                    <div class="feature-text">
+                        <h4>安全稳定</h4>
+                        <p>无广告，无插件</p>
+                    </div>
                 </div>
             </div>
-            <div class="download-list" id="downloadList">
-                <!-- 由 JS 生成 -->
+
+            <div class="stats">
+                <div class="stat-item">
+                    <h3>100+</h3>
+                    <p>支持平台</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10M+</h3>
+                    <p>用户信赖</p>
+                </div>
+                <div class="stat-item">
+                    <h3>99.9%</h3>
+                    <p>解析成功率</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>稳定服务</p>
+                </div>
             </div>
         </div>
 
-        <div class="footer">仅供学习研究使用 · 请勿用于商业用途</div>
-    </div>
+        <!-- Right Column (Card) -->
+        <div class="right-column">
+            <!-- Floating icons -->
+            <div class="floating-icon icon-link">🔗</div>
+            <div class="floating-icon icon-play">▶️</div>
+            <div class="floating-icon icon-download">⬇️</div>
+
+            <div class="download-card">
+                <div class="card-header">
+                    <h2>🎬 视频下载器</h2>
+                    <p>支持 30+ 平台 · 无水印 · 高清下载</p>
+                </div>
+
+                <div class="custom-tabs">
+                    <span class="tab-label">选择平台</span>
+                    <div class="tab-buttons">
+                        <button class="tab-btn" id="tabMulti" onclick="switchTab('multi')">多平台</button>
+                        <button class="tab-btn active" id="tabTiktok" onclick="switchTab('tiktok')">TikTok 专用</button>
+                    </div>
+                </div>
+
+                <!-- 多平台模式 -->
+                <div id="multiMode" style="display:none">
+                    <div class="platforms show" id="platformGrid">
+                        <!-- 由 JS 生成 -->
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="multiUrl" placeholder="粘贴视频链接..." autocomplete="off" spellcheck="false">
+                    </div>
+                    <button class="gradient-btn" id="multiBtn" onclick="handleMulti()">
+                        <span class="btn-text">解析下载</span>
+                        <span class="spinner"></span>
+                    </button>
+                </div>
+
+                <!-- TikTok 专用模式 -->
+                <div id="tiktokMode">
+                    <div class="input-group">
+                        <input type="text" id="tiktokUrl" placeholder="粘贴 TikTok 视频链接..." autocomplete="off" spellcheck="false">
+                    </div>
+                    <button class="gradient-btn" id="tiktokBtn" onclick="handleTikTok()">
+                        <span class="btn-text">解析下载 (HD 高清)</span>
+                        <span class="spinner"></span>
+                    </button>
+                </div>
+
+                <div class="error" id="error"></div>
+
+                <div class="result" id="result">
+                    <div class="result-header">
+                        <img class="result-thumb" id="thumb" src="" alt="">
+                        <div class="result-info">
+                            <span class="result-host" id="host"></span>
+                            <div class="result-title" id="title"></div>
+                        </div>
+                    </div>
+                    <div class="download-list" id="downloadList">
+                        <!-- 由 JS 生成 -->
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    🔒 仅供学习交流使用，请勿用于商业用途
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="supported-platforms">
+            <p>支持的平台</p>
+            <div class="platform-icons">
+                <span>🎵</span>
+                <span>▶️</span>
+                <span>📸</span>
+                <span>🐦</span>
+                <span>👤</span>
+                <span>📺</span>
+                <span>🍉</span>
+                <span>📌</span>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2024 视频下载器 All rights reserved. <span>|</span> <a href="#">隐私政策</a> <span>|</span> <a href="#">使用条款</a>
+        </div>
+    </footer>
 
     <script>
         // 支持的平台
@@ -356,14 +755,14 @@
             { name: 'Pinterest', icon: '📌', domain: 'pinterest.com' },
         ];
 
-        let currentTab = 'multi';
+        let currentTab = 'tiktok';
 
         // 初始化平台网格
         function initPlatforms() {
             const grid = document.getElementById('platformGrid');
             grid.innerHTML = PLATFORMS.map((p, i) => `
                 <div class="platform-item" onclick="selectPlatform(${i})" title="${p.name}">
-                    <span style="font-size:28px">${p.icon}</span>
+                    <span style="font-size:24px">${p.icon}</span>
                     <span>${p.name}</span>
                 </div>
             `).join('');
@@ -372,9 +771,8 @@
         // 切换 Tab
         function switchTab(tab) {
             currentTab = tab;
-            document.querySelectorAll('.tab').forEach((el, i) => {
-                el.classList.toggle('active', (i === 0 && tab === 'multi') || (i === 1 && tab === 'tiktok'));
-            });
+            document.getElementById('tabMulti').classList.toggle('active', tab === 'multi');
+            document.getElementById('tabTiktok').classList.toggle('active', tab === 'tiktok');
             document.getElementById('multiMode').style.display = tab === 'multi' ? 'block' : 'none';
             document.getElementById('tiktokMode').style.display = tab === 'tiktok' ? 'block' : 'none';
             hideResult();
