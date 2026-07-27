@@ -1,0 +1,22 @@
+{
+  "name": "tiktokdownloader-web",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --var PROXY_SIGNING_KEY:local-development-signing-key-change-before-production",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260726.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10",
+    "wrangler": "4.114.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

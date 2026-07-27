@@ -1,0 +1,2 @@
+# 生产环境请使用 `npx wrangler secret put PROXY_SIGNING_KEY`，不要提交真实密钥。
+PROXY_SIGNING_KEY=replace-with-at-least-32-random-characters

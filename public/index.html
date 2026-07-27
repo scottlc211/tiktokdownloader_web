@@ -859,12 +859,13 @@
             document.getElementById('title').textContent = data.displayTitle || '';
 
             const list = document.getElementById('downloadList');
-            list.innerHTML = (data.videoItemVoList || []).map(item => {
+            const downloadableItems = (data.videoItemVoList || []).filter(item => item.downloadUrl);
+            list.innerHTML = downloadableItems.map(item => {
                 const iconClass = item.fileType === 'image' ? 'image' : item.quality === '音频' ? 'audio' : 'video';
                 const icon = item.fileType === 'image' ? '🖼️' : item.quality === '音频' ? '🎵' : '🎬';
                 const size = item.size ? formatSize(item.size) : '';
 
-                const dlUrl = `/api/proxy?url=${encodeURIComponent(item.baseUrl)}`;
+                const dlUrl = item.downloadUrl;
                 return `
                     <a class="dl-item" href="${dlUrl}" download>
                         <div class="dl-item-info">
@@ -924,7 +925,7 @@
         // 获取封面
         function getCover(data) {
             const cover = (data.videoItemVoList || []).find(i => i.fileType === 'image');
-            return cover ? cover.baseUrl : '';
+            return cover ? cover.baseUrl : (data._cover || '');
         }
 
         // 格式化大小
